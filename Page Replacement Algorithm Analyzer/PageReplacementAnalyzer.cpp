@@ -180,13 +180,13 @@ public:
 
 // Mapping algorithm names to their corresponding factory functions and unique identifiers
 unordered_map<string, algoData *> mapping = {
-    {"OPT", new algoData([&](int noOfRAMPages, int noOfPages, vector<int> pageID)
+    {"OPT", new algoData([](int noOfRAMPages, int noOfPages, vector<int> pageID)
                          { return new OPT(noOfRAMPages, noOfPages, pageID); }, 1)},
-    {"FIFO", new algoData([&](int noOfRAMPages, int noOfPages, vector<int> pageID)
+    {"FIFO", new algoData([](int noOfRAMPages, int noOfPages, vector<int> pageID)
                           { return new FIFO(noOfRAMPages, noOfPages, pageID); }, 2)},
-    {"LRU", new algoData([&](int noOfRAMPages, int noOfPages, vector<int> pageID)
+    {"LRU", new algoData([](int noOfRAMPages, int noOfPages, vector<int> pageID)
                          { return new LRU(noOfRAMPages, noOfPages, pageID); }, 3)},
-    {"MRU", new algoData([&](int noOfRAMPages, int noOfPages, vector<int> pageID)
+    {"MRU", new algoData([](int noOfRAMPages, int noOfPages, vector<int> pageID)
                          { return new MRU(noOfRAMPages, noOfPages, pageID); }, 4)}};
 
 // ------------------------------
