@@ -457,7 +457,7 @@ vector<int> LRU::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID)
             missCount++;
             if (cache.size() == noOfRAMPages) {
                 int lru = INT_MAX, val;
-                for (int p : cache)
+                for (int p: cache)
                     if (lastUsed[p] < lru)
                         lru = lastUsed[p], val = p;
                 cache.erase(val);
@@ -492,32 +492,55 @@ vector<int> MRU::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID)
 }
 
 vector<int> OPT::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID) {
-    int missCount = 0, total = pageID.size();
-
-    vector<int> next(total, total);
-    map<int, int> futureIndex;
-    for (int i = total - 1; i >= 0; i--) {
-        if (futureIndex.count(pageID[i]))
-            next[i] = futureIndex[pageID[i]];
-        futureIndex[pageID[i]] = i;
+   int missCount = 0;
+    int total = pageID.size();
+    
+    vector<int> nxtOcc(total,total);
+    map<int,int> nearestOcc;
+    for(int i=total-1;i>=0;i--){
+        if(nearestOcc.find(pageID[i]) != nearestOcc.end()){
+            nxtOcc[i] = nearestOcc[pageID[i]];
+        }
+        nearestOcc[pageID[i]] = i;
     }
 
-    unordered_set<int> cache;
-    set<int> occSet;
-
-    for (int i = 0; i < total; i++) {
-        if (!cache.count(pageID[i])) {
-            if (cache.size() == noOfRAMPages) {
-                int removeAt = *occSet.rbegin();
-                occSet.erase(removeAt);
-                cache.erase(pageID[removeAt]);
+    unordered_set<int> chachedPages;
+    set<int> nxtOccOfChachedPages;
+    unordered_set<int> noNextOcc;
+    for (int i = 0; i < pageID.size(); i++)
+    {
+        if(!chachedPages.count(pageID[i])){
+            if((chachedPages.size() + noNextOcc.size()) == noOfRAMPages){
+                if(noNextOcc.size()>0)
+                {
+                    noNextOcc.erase(*noNextOcc.begin());
+                }
+                else
+                {
+                    int pageToRemove = pageID[*nxtOccOfChachedPages.rbegin()];
+                    nxtOccOfChachedPages.erase(*nxtOccOfChachedPages.rbegin());
+                    chachedPages.erase(pageToRemove);
+                }
             }
-            cache.insert(pageID[i]);
-            occSet.insert(next[i]);
+            if(nxtOcc[i]==total)
+            {
+                noNextOcc.insert(pageID[i]);
+            }
+            else
+            {
+                chachedPages.insert(pageID[i]);
+                nxtOccOfChachedPages.insert(nxtOcc[i]);
+            }
             missCount++;
-        } else {
-            occSet.erase(i);
-            occSet.insert(next[i]);
+        }
+        else{
+            nxtOccOfChachedPages.erase(i);
+            if(nxtOcc[i]==total)
+            {
+                noNextOcc.insert(pageID[i]);
+            }
+            else
+                nxtOccOfChachedPages.insert(nxtOcc[i]);
         }
     }
     return {missCount, total};
