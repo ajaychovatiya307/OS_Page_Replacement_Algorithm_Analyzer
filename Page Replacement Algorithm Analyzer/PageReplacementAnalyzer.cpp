@@ -538,6 +538,7 @@ vector<int> OPT::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID)
             if(nxtOcc[i]==total)
             {
                 noNextOcc.insert(pageID[i]);
+                chachedPages.erase(pageID[i]);
             }
             else
                 nxtOccOfChachedPages.insert(nxtOcc[i]);
