@@ -449,21 +449,21 @@ vector<int> FIFO::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID
 
 vector<int> LRU::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID) {
     int missCount = 0, total = pageID.size();
-    unordered_set<int> cache;
+    set<pair<int,int>> cache;
     unordered_map<int, int> lastUsed;
 
     for (int i = 0; i < total; i++) {
-        if (!cache.count(pageID[i])) {
+        if (cache.find({pageID[i],lastUsed[pageID[i]]})==cache.end()) {
             missCount++;
             if (cache.size() == noOfRAMPages) {
-                int lru = INT_MAX, val;
-                for (int p: cache)
-                    if (lastUsed[p] < lru)
-                        lru = lastUsed[p], val = p;
-                cache.erase(val);
+                cache.erase(*cache.begin());
             }
-            cache.insert(pageID[i]);
         }
+        else
+        {
+            cache.erase({pageID[i],lastUsed[pageID[i]]});
+        }
+        cache.insert({pageID[i],i});
         lastUsed[pageID[i]] = i;
     }
     return {missCount, total};
@@ -471,21 +471,21 @@ vector<int> LRU::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID)
 
 vector<int> MRU::processRAM(int noOfPages, int noOfRAMPages, vector<int> pageID) {
     int missCount = 0, total = pageID.size();
-    unordered_set<int> cache;
+    set<pair<int,int>> cache;
     unordered_map<int, int> lastUsed;
 
     for (int i = 0; i < total; i++) {
-        if (!cache.count(pageID[i])) {
+        if (cache.find({pageID[i],lastUsed[pageID[i]]})==cache.end()) {
             missCount++;
             if (cache.size() == noOfRAMPages) {
-                int mru = -1, val;
-                for (int p : cache)
-                    if (lastUsed[p] > mru)
-                        mru = lastUsed[p], val = p;
-                cache.erase(val);
+                cache.erase(*(--cache.end()));
             }
-            cache.insert(pageID[i]);
         }
+        else
+        {
+            cache.erase({pageID[i],lastUsed[pageID[i]]});  
+        }
+        cache.insert({pageID[i],i});
         lastUsed[pageID[i]] = i;
     }
     return {missCount, total};
