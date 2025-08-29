@@ -164,13 +164,7 @@ Adjust the page reference generation in `process::createProcess()`:
 - Change `noOfBlocks = 100 * noOfPages` for different reference string lengths
 - Modify the random generation pattern for specific access patterns
 
-## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-algorithm`)
-3. Commit changes (`git commit -am 'Add new page replacement algorithm'`)
-4. Push to branch (`git push origin feature/new-algorithm`)
-5. Create a Pull Request
 
 
 
